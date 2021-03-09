@@ -33,9 +33,15 @@ async function edit(req, res, next) {
   let data = req.body;
   let connection = req.pool;
   let result = '';
+  let resultPass = '';
 
   try {
     result = await helper.editUser(data, connection);
+
+    if(data.password) {
+      resultPass = await helper.editPassword(data, connection);
+    }
+
   } catch (e) {
     return res.status(400).send(err);
   } finally {
@@ -68,10 +74,10 @@ async function login(req, res, next) {
           return res.status(200).send({ user : data.user, token : token });
         }
       } else {
-        next(new Error("Usuario no encontrado"));
+        return res.status(400).send({ success: false, msg: 'Credenciales no válidas.' });
       }
     } catch (e) {
-      next(new Error("Error; ", e));
+      return res.status(400).send({ success: false, msg: `${e}` });
     }
   })(req, res, next);
 }

@@ -46,7 +46,6 @@ function editUser(data, connection) {
         if(err) reject(err);
 
         if(response) {
-          console.log('response: ', response);
           resolve({ success: true, msg: 'Usuario actulizado con éxito.' });
         }
       });
@@ -132,13 +131,18 @@ function comparePasswordHash(data, connection) {
       connection.query(query, (err, response) => {
         if(err) reject(err);
 
-        let account = response[0];
+        if(response.length >= 1) {
+          let account = response[0];
 
-        bcrypt.compare(data.password, account.password, (err, match) => {
-          if(err) reject(err);
+          bcrypt.compare(data.password, account.password, (err, match) => {
+            if(err) reject(err);
 
-          resolve({ success: true, valid: match });
-        });
+            resolve({ success: true, valid: match });
+          });
+        } else {
+          resolve({ success: false, valid: false });
+        }
+
       });
     } catch (e) {
       reject(err);
@@ -152,7 +156,6 @@ function getList(data, connection) {
     let getQueryParams = getQuery(data.filters);
 
     query += getQueryParams;
-    console.log('query', query);
 
     try {
       connection.query(query, (err, response) => {
@@ -183,10 +186,35 @@ function getQuery(params) {
   return query;
 }
 
+function editPassword(data, connection) {
+  return new Promise((resolve, reject) => {
+    let query = 'UPDATE ACCOUNTS SET ? WHERE idUser = ?';
+    let salt = bcrypt.genSaltSync(10);
+    let obj = {
+      password : bcrypt.hashSync(data.password, salt)
+    };
+
+    try {
+      connection.query(query, [obj, data.id], (err, response) => {
+        if(err) reject(err);
+
+        if(response) {
+          resolve({ success: true, msg: 'Contraseña actulizada con éxito.' });
+        }
+      });
+    } catch (e) {
+
+    } finally {
+
+    }
+  });
+}
+
 module.exports = {
   createUser: createUser,
   findUserByEmail : findUserByEmail,
   comparePasswordHash: comparePasswordHash,
   getList : getList,
-  editUser : editUser
+  editUser : editUser,
+  editPassword : editPassword
 };
