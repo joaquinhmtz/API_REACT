@@ -1,0 +1,9 @@
+{
+    "name": "API - MI GALERIA",
+    "version": "1.0.0",
+    "description": "API para subir tus fotografías",
+    "url" : "http://localhost:3001",
+    "template": {
+        "forceLanguage": "en"
+    }
+}
