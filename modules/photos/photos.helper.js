@@ -16,6 +16,7 @@ function create(data, connection) {
           idUser : 1,
           idCategory : category.id,
         };
+
         connection.query(query, obj, (err, response) => {
           if(err) reject(err);
 

@@ -152,10 +152,16 @@ function comparePasswordHash(data, connection) {
 
 function getList(data, connection) {
   return new Promise(async (resolve, reject) => {
-    let query = 'SELECT * FROM USERS WHERE ';
+    let query = 'SELECT * FROM USERS ';
     let getQueryParams = getQuery(data.filters);
+    let pagination = {
+      limit : data.pagination.limit,
+      page : data.pagination.page,
+      offset : (data.pagination.page - 1) * data.pagination.limit
+    };
 
     query += getQueryParams;
+    query += 'LIMIT ' + pagination.limit + ' OFFSET ' + pagination.offset;
 
     try {
       connection.query(query, (err, response) => {
@@ -170,18 +176,21 @@ function getList(data, connection) {
 }
 
 function getQuery(params) {
-  let query = '(';
+  let text = '';
+  let query = '';
 
   if(params.email) {
-    query += 'email LIKE "%' + params.email + '%" ';
+    text += 'email LIKE "%' + params.email + '%" ';
   }
 
   if(params.fullname) {
     if(params.email) query += 'AND ';
-    query += 'fullname LIKE "%' + params.fullname + '%"';
+    text += 'fullname LIKE "%' + params.fullname + '%"';
   }
 
-  query += ');';
+  if(params.email || params.fullname) {
+    query = 'WHERE (' + text + ')';
+  }
 
   return query;
 }

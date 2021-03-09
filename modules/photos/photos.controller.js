@@ -33,7 +33,7 @@ async function updatePhoto(req, res, next) {
   let data = req.body;
 
   try {
-    let result = await helper.deletePhoto(data, connection);
+    let result = await helper.updatePhoto(data, connection);
 
     return res.status(200).send(result);
   } catch (e) {
