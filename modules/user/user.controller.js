@@ -22,10 +22,10 @@ async function create(req, res, next) {
 
   try {
     result = await helper.createUser(data, pool);
-  } catch (e) {
-    return res.status(400).send(err);
-  } finally {
+
     return res.status(200).send(result);
+  } catch (e) {
+    return res.status(400).send(e);
   }
 }
 

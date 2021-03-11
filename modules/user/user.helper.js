@@ -3,10 +3,6 @@ const bcrypt    = require('bcryptjs');
 function createUser(data, connection) {
   return new Promise(async (resolve, reject) => {
     try {
-      connection.connect((err) => {
-        if(err) reject(err);
-      });
-
       let user = await findUserByEmail(data, connection);
 
       if(!user.success) {
@@ -63,8 +59,8 @@ function findUserByEmail(data, connection) {
       connection.query(query, (err, response) => {
         if(err) reject(err);
 
-        if(response.length > 0) resolve({ success: true, response: response });
-        else if (response.length <= 0) resolve({ success: false });
+        if(response && response.length > 0) resolve({ success: true, response: response });
+        else if (!response || response.length <= 0) resolve({ success: false });
       });
     } catch(e) {
       reject(e);
