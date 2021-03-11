@@ -157,8 +157,7 @@ function getList(data, connection) {
     };
 
     query += getQueryParams;
-    query += 'LIMIT ' + pagination.limit + ' OFFSET ' + pagination.offset;
-
+    query += ' LIMIT ' + pagination.limit + ' OFFSET ' + pagination.offset;
     try {
       connection.query(query, (err, response) => {
         if(err) reject(err);
@@ -177,10 +176,10 @@ function getQuery(params) {
 
   if(params.email) {
     text += 'email LIKE "%' + params.email + '%" ';
+    (params.fullname ? text += 'and ': '');
   }
 
   if(params.fullname) {
-    if(params.email) query += 'AND ';
     text += 'fullname LIKE "%' + params.fullname + '%"';
   }
 
